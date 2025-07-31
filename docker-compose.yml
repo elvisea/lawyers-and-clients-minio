@@ -1,0 +1,49 @@
+services:
+  # Init container para criar a pasta data com permissões corretas
+  minio-init:
+    image: busybox:latest
+    container_name: minio-init
+    user: "0:0" # Executar como root para poder alterar permissões
+    volumes:
+      - ./data:/data
+    command: |
+      sh -c '
+        echo "🔧 Criando diretório data com permissões corretas..."
+        mkdir -p /data
+        chown -R ${UID:-1000}:${GID:-1000} /data
+        chmod -R 755 /data
+        echo "✅ Diretório data configurado com sucesso!"
+        echo "📁 Permissões aplicadas: $(ls -ld /data)"
+      '
+    networks:
+      - minio_network
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    restart: unless-stopped
+    depends_on:
+      minio-init:
+        condition: service_completed_successfully
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER:-minioadmin}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-minioadmin123}"
+      MINIO_BROWSER_REDIRECT_URL: "${MINIO_BROWSER_REDIRECT_URL:-http://localhost:9001}"
+    volumes:
+      - ./data:/data
+    user: "${UID:-1000}:${GID:-1000}"
+    command: server --console-address ":9001" /data
+    networks:
+      - minio_network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+networks:
+  minio_network:
+    driver: bridge

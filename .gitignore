@@ -1,0 +1,8 @@
+# Dados do MinIO
+data/
+
+# Variáveis de ambiente
+.env
+
+# Logs
+*.log
