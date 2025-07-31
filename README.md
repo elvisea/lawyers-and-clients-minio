@@ -4,7 +4,7 @@
 
 1. **Copie o arquivo de exemplo**:
    ```bash
-   cp env.example.txt .env
+   cp .env.example .env
    ```
 
 2. **Edite o arquivo `.env`** conforme necessário:
@@ -17,7 +17,7 @@
    MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
    MINIO_PORT=9000
    MINIO_CONSOLE_PORT=9001
-   MINIO_BUCKET=lawyers-and-clients-bucket
+   MINIO_BUCKET=minio-bucket
    UID=1000
    GID=1000
    ```
@@ -89,7 +89,7 @@ curl http://localhost:9000/minio/health/live
 | `MINIO_BROWSER_REDIRECT_URL` | URL de redirecionamento | `http://localhost:9001` |
 | `MINIO_PORT` | Porta da API | `9000` |
 | `MINIO_CONSOLE_PORT` | Porta do console web | `9001` |
-| `MINIO_BUCKET` | Bucket padrão (opcional) | `lawyers-and-clients-bucket` |
+| `MINIO_BUCKET` | Bucket padrão (opcional) | `minio-bucket` |
 | `UID` | ID do usuário Linux/Mac | `1000` |
 | `GID` | ID do grupo Linux/Mac | `1000` |
 
